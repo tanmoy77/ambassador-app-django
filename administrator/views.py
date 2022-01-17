@@ -2,6 +2,7 @@ from rest_framework import generics, mixins
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response 
+from django.core.cache import cache
 from common.authentication import JWTAuthentication
 from common.serializers import UserSerializer
 from core.models import Link, User, Product, Order, OrderItem
@@ -37,13 +38,28 @@ class ProductGenericAPIView(
         return self.list(request)
     
     def post(self, request, pk=None):
-        return self.create(request)
+        response = self.create(request)
+        for key in cache.keys('*'):
+            if 'products_frontend' in key:
+                cache.delete(key)
+        cache.delete('products_backend')
+        return response
 
     def put(self, request, pk=None):
-        return self.partial_update(request, pk)
+        response = self.partial_update(request, pk)
+        for key in cache.keys('*'):
+            if 'products_frontend' in key:
+                cache.delete(key)
+        cache.delete('products_backend')
+        return response
     
     def delete(self, request, pk=None):
-        return self.destroy(request, pk)
+        response = self.destroy(request, pk)
+        for key in cache.keys('*'):
+            if 'products_frontend' in key:
+                cache.delete(key)
+        cache.delete('products_backend')
+        return response
 
 class LinkAPIView(APIView):
     authentication_classes = [JWTAuthentication]
