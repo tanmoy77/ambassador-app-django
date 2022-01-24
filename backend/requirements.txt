@@ -1,0 +1,10 @@
+Django>=3.0,<4.0 
+psycopg2>=2.8 
+djangorestframework==3.12.4
+pytz==2021.3
+django-cors-headers==3.11.0
+Pillow==9.0.0
+PyJWT==2.0.1
+Faker==11.3.0
+django-redis==5.2.0
+stripe==2.64.0
